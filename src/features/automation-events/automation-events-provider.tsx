@@ -110,14 +110,16 @@ export function AutomationEventsProvider({
   )
 
   useEffect(() => {
-    if (!accessToken) {
-      processedEventIds.current.clear()
-      terminalTaskIds.current.clear()
-      return
-    }
+    // TODO: Implementar reconexão com backoff exponencial e jitter
+    // if (!accessToken) {
+    //   processedEventIds.current.clear()
+    //   terminalTaskIds.current.clear()
+    //   return
+    // }
 
     const eventSource = new EventSource(getAutomationEventsUrl(), {
-      withCredentials: true,
+      // TODO: Reimplementar autenticação via cookies de sessão para evitar exposição do token e problemas de CORS
+      withCredentials: false,
     })
 
     const handleOpen = () => {
