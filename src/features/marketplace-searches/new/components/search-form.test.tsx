@@ -70,8 +70,8 @@ describe('SearchForm', () => {
 
     expect(onSubmit).toHaveBeenCalledOnce()
     expect(onSubmit.mock.calls[0][0]).toEqual({
-      marketplace: 'MERCADO_LIVRE',
-      keyword: 'iphone',
+      marketplace: 'mercado_livre',
+      query: 'iphone',
       category: 'celulares',
       limit: 50,
     })
@@ -97,7 +97,11 @@ describe('SearchForm', () => {
 
   it('displays API error message', async () => {
     const { getByText } = await render(
-      <SearchForm onSubmit={vi.fn()} isPending={false} error='Falha na conexão' />
+      <SearchForm
+        onSubmit={vi.fn()}
+        isPending={false}
+        error='Falha na conexão'
+      />
     )
 
     const errorMessage = getByText(/Falha na conexão/i)

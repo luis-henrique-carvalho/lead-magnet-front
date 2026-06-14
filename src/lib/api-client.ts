@@ -6,8 +6,8 @@ export const api = axios.create({
 })
 
 export interface CreateSearchPayload {
-  marketplace: string
-  keyword: string
+  marketplace: 'mercado_livre' | 'amazon' | 'shopee'
+  query?: string
   category?: string
   limit: number
 }
