@@ -17,6 +17,8 @@ import { LayoutProvider } from '@/context/layout-provider'
 import { SearchProvider } from '@/context/search-provider'
 import { ThemeProvider } from '@/context/theme-provider'
 import { SidebarProvider } from '@/components/ui/sidebar'
+import { Toaster } from '@/components/ui/sonner'
+import { AutomationEventsProvider } from '@/features/automation-events/automation-events-provider'
 import { SearchDetails } from './index'
 
 const search = {
@@ -30,6 +32,31 @@ const search = {
   savedCount: 14,
   createdAt: '2026-06-14T10:00:00.000Z',
   completedAt: '2026-06-14T10:01:00.000Z',
+}
+
+const captureProductResponse = {
+  items: [
+    {
+      resultId: 'result-id',
+      discoveredAt: '2026-06-14T10:00:30.000Z',
+      product: {
+        id: 'product-id',
+        externalId: 'AMZ-1',
+        marketplace: 'amazon',
+        title: 'Kindle Paperwhite',
+        originalUrl: 'https://amazon.com.br/dp/AMZ-1',
+        imageUrl: null,
+        price: 799.9,
+        rating: 4.8,
+        reviewsCount: 3210,
+        salesCount: 950,
+        category: 'Leitores digitais',
+      },
+    },
+  ],
+  page: 1,
+  limit: 20,
+  total: 1,
 }
 
 function renderScreen({
@@ -46,17 +73,20 @@ function renderScreen({
   })
   const rootRoute = createRootRoute({
     component: () => (
-      <SearchProvider>
-        <DirectionProvider>
-          <ThemeProvider>
-            <LayoutProvider>
-              <SidebarProvider>
-                <Outlet />
-              </SidebarProvider>
-            </LayoutProvider>
-          </ThemeProvider>
-        </DirectionProvider>
-      </SearchProvider>
+      <AutomationEventsProvider>
+        <SearchProvider>
+          <DirectionProvider>
+            <ThemeProvider>
+              <LayoutProvider>
+                <SidebarProvider>
+                  <Outlet />
+                  <Toaster />
+                </SidebarProvider>
+              </LayoutProvider>
+            </ThemeProvider>
+          </DirectionProvider>
+        </SearchProvider>
+      </AutomationEventsProvider>
     ),
   })
   const indexRoute = createRoute({
@@ -227,6 +257,114 @@ describe('SearchDetails', () => {
     await expect
       .element(productLink)
       .toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
+  it('enfileira a captura de link afiliado com os dados do produto e da busca', async () => {
+    vi.spyOn(api, 'get').mockImplementation(async (url) => {
+      if (url === '/marketplace-searches/search-id') return { data: search }
+      if (url === '/automation-tasks/task-id') {
+        return { data: { id: 'task-id', status: 'completed' } }
+      }
+
+      return { data: captureProductResponse }
+    })
+    const invalidateQueries = vi.spyOn(
+      QueryClient.prototype,
+      'invalidateQueries'
+    )
+    const post = vi.spyOn(api, 'post').mockResolvedValue({
+      data: {
+        taskId: 'capture-task-id',
+        statusUrl: '/automation-tasks/capture-task-id',
+      },
+    })
+
+    const screen = await renderScreen()
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Iniciar captura de link afiliado para Kindle Paperwhite',
+      })
+    )
+
+    await vi.waitFor(() => {
+      expect(post).toHaveBeenCalledWith('/affiliate-link-capture', {
+        searchId: 'search-id',
+        productId: 'product-id',
+        marketplace: 'amazon',
+        originalProductUrl: 'https://amazon.com.br/dp/AMZ-1',
+      })
+    })
+    await expect
+      .element(screen.getByText('Captura de link afiliado enfileirada.'))
+      .toBeInTheDocument()
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['marketplace-searches', 'captures', 'search-id'],
+    })
+  })
+
+  it('bloqueia novos envios enquanto a captura está sendo enfileirada', async () => {
+    vi.spyOn(api, 'get').mockImplementation(async (url) => {
+      if (url === '/marketplace-searches/search-id') return { data: search }
+      if (url === '/automation-tasks/task-id') {
+        return { data: { id: 'task-id', status: 'completed' } }
+      }
+      return { data: captureProductResponse }
+    })
+    let resolveCapture: ((value: unknown) => void) | undefined
+    const post = vi.spyOn(api, 'post').mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveCapture = resolve
+        })
+    )
+    const screen = await renderScreen()
+    const captureButton = screen.getByRole('button', {
+      name: 'Iniciar captura de link afiliado para Kindle Paperwhite',
+    })
+
+    await userEvent.click(captureButton)
+
+    await expect.element(captureButton).toBeDisabled()
+    await expect
+      .element(screen.getByText('Enfileirando...'))
+      .toBeInTheDocument()
+    expect(post).toHaveBeenCalledTimes(1)
+
+    resolveCapture?.({
+      data: {
+        taskId: 'capture-task-id',
+        statusUrl: '/automation-tasks/capture-task-id',
+      },
+    })
+  })
+
+  it('informa quando a captura de link afiliado não pode ser enfileirada', async () => {
+    vi.spyOn(api, 'get').mockImplementation(async (url) => {
+      if (url === '/marketplace-searches/search-id') return { data: search }
+      if (url === '/automation-tasks/task-id') {
+        return { data: { id: 'task-id', status: 'completed' } }
+      }
+
+      return { data: captureProductResponse }
+    })
+    vi.spyOn(api, 'post').mockRejectedValue(new Error('Queue unavailable'))
+
+    const screen = await renderScreen()
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Iniciar captura de link afiliado para Kindle Paperwhite',
+      })
+    )
+
+    await expect
+      .element(
+        screen.getByText(
+          'Não foi possível enfileirar a captura de link afiliado.'
+        )
+      )
+      .toBeInTheDocument()
   })
 
   it('não converte campos ausentes do produto para zero', async () => {

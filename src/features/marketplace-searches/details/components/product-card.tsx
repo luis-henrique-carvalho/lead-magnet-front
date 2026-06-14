@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import type { MarketplaceSearchProduct } from '../schemas/search-products-schema'
+import { AffiliateLinkCaptureButton } from './affiliate-link-capture-button'
 
 const priceFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -104,7 +105,8 @@ export function ProductCard({ item }: { item: MarketplaceSearchProduct }) {
         </div>
       </CardContent>
 
-      <CardFooter className='pb-5'>
+      <CardFooter className='grid gap-2 pb-5'>
+        <AffiliateLinkCaptureButton product={product} />
         <Button asChild variant='outline' className='w-full'>
           <a
             href={product.originalUrl}

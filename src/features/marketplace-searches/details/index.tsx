@@ -5,6 +5,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { AutomationConnectionStatus } from '@/features/automation-events/automation-events-provider'
 import { ProductsList } from './components/products-list'
 import { SearchDetailsDialogs } from './components/search-details-dialogs'
 import { SearchDetailsError } from './components/search-details-error'
@@ -61,6 +62,7 @@ export function SearchDetails({
     >
       <Header fixed>
         <Search className='me-auto' />
+        <AutomationConnectionStatus />
         <ThemeSwitch />
         <ConfigDrawer />
         <ProfileDropdown />

@@ -9,6 +9,8 @@ export const marketplaceSearchKeys = {
     [...marketplaceSearchKeys.all, 'task', taskId] as const,
   products: (searchId: string, page: number, limit: number) =>
     [...marketplaceSearchKeys.all, 'products', searchId, page, limit] as const,
+  captures: (searchId: string) =>
+    [...marketplaceSearchKeys.all, 'captures', searchId] as const,
 }
 
 export function useSearchDetails(
