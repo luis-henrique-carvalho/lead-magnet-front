@@ -1,11 +1,11 @@
+import { AxiosError } from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { AxiosError } from 'axios'
+import { createMarketplaceSearch } from '@/lib/api-client'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { createMarketplaceSearch } from '@/lib/api-client'
 import { SearchForm, type SearchFormValues } from './components/search-form'
 
 export function NewSearch() {
@@ -17,6 +17,7 @@ export function NewSearch() {
       navigate({
         to: '/marketplace-searches/$searchId',
         params: { searchId: data.searchId },
+        search: { page: 1, limit: 20 },
       })
     },
   })
@@ -24,7 +25,7 @@ export function NewSearch() {
   const handleSubmit = (values: SearchFormValues) => {
     mutation.mutate({
       marketplace: values.marketplace,
-      keyword: values.keyword,
+      query: values.query,
       category: values.category || undefined,
       limit: values.limit,
     })
@@ -57,7 +58,8 @@ export function NewSearch() {
         <div className='mb-6'>
           <h1 className='text-2xl font-bold tracking-tight'>Nova Busca</h1>
           <p className='text-muted-foreground'>
-            Preencha os campos abaixo para iniciar uma nova busca de produtos no marketplace.
+            Preencha os campos abaixo para iniciar uma nova busca de produtos no
+            marketplace.
           </p>
         </div>
 

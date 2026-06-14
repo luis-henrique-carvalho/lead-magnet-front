@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -16,8 +16,10 @@ import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 
 const formSchema = z.object({
-  marketplace: z.string().min(1, 'Marketplace é obrigatório.'),
-  keyword: z.string().min(1, 'Palavra-chave é obrigatória.'),
+  marketplace: z.enum(['mercado_livre', 'amazon', 'shopee'], {
+    error: 'Marketplace é obrigatório.',
+  }),
+  query: z.string().min(1, 'Palavra-chave é obrigatória.'),
   category: z.string().optional(),
   limit: z
     .number()
@@ -34,24 +36,24 @@ interface SearchFormProps {
 }
 
 const marketplaces = [
-  { label: 'Mercado Livre', value: 'MERCADO_LIVRE' },
-  { label: 'Amazon', value: 'AMAZON' },
-  { label: 'Shopee', value: 'SHOPEE' },
+  { label: 'Mercado Livre', value: 'mercado_livre' },
+  { label: 'Amazon', value: 'amazon' },
+  { label: 'Shopee', value: 'shopee' },
 ]
 
 export function SearchForm({ onSubmit, isPending, error }: SearchFormProps) {
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      marketplace: '',
-      keyword: '',
+      marketplace: undefined,
+      query: '',
       category: '',
       limit: 100,
     },
   })
 
   return (
-    <div className='space-y-4 max-w-md w-full'>
+    <div className='w-full max-w-md space-y-4'>
       {error && (
         <Alert variant='destructive'>
           <AlertTitle>Erro</AlertTitle>
@@ -81,7 +83,7 @@ export function SearchForm({ onSubmit, isPending, error }: SearchFormProps) {
 
           <FormField
             control={form.control}
-            name='keyword'
+            name='query'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Palavra-chave</FormLabel>
