@@ -22,6 +22,41 @@ vi.mock('@/context/theme-provider', () => ({
   useTheme: () => ({ setTheme: mocks.setTheme }),
 }))
 
+vi.mock('@/components/layout/data/sidebar-data', () => ({
+  sidebarData: {
+    user: {
+      name: 'satnaing',
+      email: 'satnaingdev@gmail.com',
+      avatar: '/avatars/shadcn.jpg',
+    },
+    teams: [],
+    navGroups: [
+      {
+        title: 'General',
+        items: [
+          {
+            title: 'Dashboard',
+            url: '/',
+          },
+          {
+            title: 'Tasks',
+            url: '/tasks',
+          },
+          {
+            title: 'Settings',
+            items: [
+              {
+                title: 'Account',
+                url: '/settings/account',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+}))
+
 type ShortcutModifier = 'Control' | 'Meta'
 
 async function renderWithSearchProvider() {
