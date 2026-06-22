@@ -18,7 +18,7 @@ import { SearchProvider } from '@/context/search-provider'
 import { ThemeProvider } from '@/context/theme-provider'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
-import { AutomationEventsProvider } from '@/features/automation-events/automation-events-provider'
+import { AutomationEventsProvider } from '@/features/automation-events/providers/automation-events-provider'
 import { SearchDetails } from './index'
 
 const search = {

@@ -7,8 +7,10 @@ export const marketplaceSearchKeys = {
     [...marketplaceSearchKeys.all, 'detail', searchId] as const,
   task: (taskId: string) =>
     [...marketplaceSearchKeys.all, 'task', taskId] as const,
+  productsRoot: (searchId: string) =>
+    [...marketplaceSearchKeys.all, 'products', searchId] as const,
   products: (searchId: string, page: number, limit: number) =>
-    [...marketplaceSearchKeys.all, 'products', searchId, page, limit] as const,
+    [...marketplaceSearchKeys.productsRoot(searchId), page, limit] as const,
   captures: (searchId: string) =>
     [...marketplaceSearchKeys.all, 'captures', searchId] as const,
 }

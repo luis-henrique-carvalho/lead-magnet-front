@@ -6,7 +6,7 @@ import { SearchProvider } from '@/context/search-provider'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/layout/app-sidebar'
 import { SkipToMain } from '@/components/skip-to-main'
-import { AutomationEventsProvider } from '@/features/automation-events/automation-events-provider'
+import { AutomationEventsProvider } from '@/features/automation-events/providers/automation-events-provider'
 
 type AuthenticatedLayoutProps = {
   children?: React.ReactNode

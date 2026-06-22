@@ -41,6 +41,10 @@ class FakeEventSource extends EventTarget {
       })
     )
   }
+
+  emitRaw(type: 'task.created' | 'task.updated', data: string) {
+    this.dispatchEvent(new MessageEvent(type, { data }))
+  }
 }
 
 async function renderProvider() {
@@ -66,9 +70,8 @@ describe('AutomationEventsProvider', () => {
     vi.unstubAllGlobals()
   })
 
-  it('abre uma única conexão autenticada e informa quando está conectada', async () => {
+  it('abre uma única conexão pública e informa quando está conectada', async () => {
     vi.stubGlobal('EventSource', FakeEventSource)
-    useAuthStore.getState().auth.setAccessToken('session-token')
 
     const { screen } = await renderProvider()
 
@@ -84,6 +87,21 @@ describe('AutomationEventsProvider', () => {
       .element(
         screen.getByRole('status', {
           name: 'Atualizações em tempo real conectadas',
+        })
+      )
+      .toBeInTheDocument()
+  })
+
+  it('abre conexão mesmo sem sessão enquanto a autenticação da SSE não está ativa', async () => {
+    vi.stubGlobal('EventSource', FakeEventSource)
+
+    const { screen } = await renderProvider()
+
+    expect(FakeEventSource.instances).toHaveLength(1)
+    await expect
+      .element(
+        screen.getByRole('status', {
+          name: 'Conectando atualizações em tempo real',
         })
       )
       .toBeInTheDocument()
@@ -120,6 +138,28 @@ describe('AutomationEventsProvider', () => {
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ['marketplace-searches', 'products', 'search-id'],
     })
+  })
+
+  it('ignora notificações com JSON inválido ou payload fora do schema', async () => {
+    vi.stubGlobal('EventSource', FakeEventSource)
+    useAuthStore.getState().auth.setAccessToken('session-token')
+    const { queryClient } = await renderProvider()
+    const invalidateQueries = vi.spyOn(queryClient, 'invalidateQueries')
+    const eventSource = FakeEventSource.instances[0]
+
+    eventSource?.emitRaw('task.updated', '{')
+    eventSource?.emit('task.updated', {
+      eventId: '',
+      eventType: 'task.updated',
+      taskId: 'task-id',
+      type: 'marketplace_product_search',
+      status: 'processing',
+      marketplace: 'amazon',
+      updatedAt: '2026-06-14T10:00:30.000Z',
+      searchId: 'search-id',
+    })
+
+    expect(invalidateQueries).not.toHaveBeenCalled()
   })
 
   it('deixa de sincronizar uma task depois que ela atinge estado terminal', async () => {
@@ -179,7 +219,7 @@ describe('AutomationEventsProvider', () => {
     })
   })
 
-  it('fecha a conexão quando a sessão é encerrada', async () => {
+  it('mantém a conexão pública quando a sessão é encerrada', async () => {
     vi.stubGlobal('EventSource', FakeEventSource)
     useAuthStore.getState().auth.setAccessToken('session-token')
     await renderProvider()
@@ -187,9 +227,8 @@ describe('AutomationEventsProvider', () => {
 
     useAuthStore.getState().auth.reset()
 
-    await vi.waitFor(() => {
-      expect(eventSource?.closed).toBe(true)
-    })
+    expect(eventSource?.closed).toBe(false)
+    expect(FakeEventSource.instances).toHaveLength(1)
   })
 
   it('permite reconciliar manualmente e reconcilia de novo ao reconectar', async () => {
