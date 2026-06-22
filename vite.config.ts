@@ -21,6 +21,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['react-dom/client', 'vitest-browser-react'],
+  },
   test: {
     silent: 'passed-only',
     unstubEnvs: true,

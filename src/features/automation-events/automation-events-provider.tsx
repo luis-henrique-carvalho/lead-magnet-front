@@ -118,8 +118,7 @@ export function AutomationEventsProvider({
     // }
 
     const eventSource = new EventSource(getAutomationEventsUrl(), {
-      // TODO: Reimplementar autenticação via cookies de sessão para evitar exposição do token e problemas de CORS
-      withCredentials: false,
+      withCredentials: true,
     })
 
     const handleOpen = () => {
