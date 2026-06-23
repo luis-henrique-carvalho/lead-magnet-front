@@ -5,7 +5,7 @@ export function SearchDetailsPrimaryButtons() {
   return (
     <Button asChild>
       <a href='/marketplace-searches/new'>
-        <Plus />
+        <Plus data-icon='inline-start' />
         Nova busca
       </a>
     </Button>

@@ -31,7 +31,7 @@ function OptionalMetric({
 }) {
   return (
     <span className='inline-flex items-center gap-1 text-sm text-muted-foreground'>
-      <Icon className='size-4' aria-hidden='true' />
+      <Icon aria-hidden='true' />
       {value ?? 'Não disponível'}
     </span>
   )
@@ -68,7 +68,7 @@ export function ProductCard({ item }: { item: MarketplaceSearchProduct }) {
           </Badge>
         </div>
 
-        <div className='space-y-2'>
+        <div className='flex flex-col gap-2'>
           <h3 className='line-clamp-2 font-semibold'>{product.title}</h3>
           <p className='text-xl font-bold'>
             {product.price === null
@@ -114,7 +114,7 @@ export function ProductCard({ item }: { item: MarketplaceSearchProduct }) {
             rel='noopener noreferrer'
           >
             Ver produto original
-            <ExternalLink aria-hidden='true' />
+            <ExternalLink data-icon='inline-end' aria-hidden='true' />
           </a>
         </Button>
       </CardFooter>

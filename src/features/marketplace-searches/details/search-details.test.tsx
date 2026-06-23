@@ -508,10 +508,10 @@ describe('SearchDetails', () => {
     const productsRegion = screen.getByRole('region', {
       name: 'Produtos descobertos',
     })
-    await userEvent.selectOptions(
-      productsRegion.getByRole('combobox', { name: 'Itens por página' }),
-      '50'
+    await userEvent.click(
+      productsRegion.getByRole('combobox', { name: 'Itens por página' })
     )
+    await userEvent.click(screen.getByRole('option', { name: '50' }))
 
     expect(onPaginationChange).toHaveBeenCalledWith({ page: 1, limit: 50 })
   })
@@ -570,8 +570,7 @@ describe('SearchDetails', () => {
         return { data: { id: 'task-id', status: 'completed' } }
       }
       if (
-        url ===
-        '/marketplace-searches/search-id/affiliate-link-capture-tasks'
+        url === '/marketplace-searches/search-id/affiliate-link-capture-tasks'
       ) {
         capturesParams = config?.params
         return {
@@ -607,9 +606,11 @@ describe('SearchDetails', () => {
     })
 
     await expect
-      .element(capturesRegion.getByRole('heading', {
-        name: 'Capturas de link afiliado',
-      }))
+      .element(
+        capturesRegion.getByRole('heading', {
+          name: 'Capturas de link afiliado',
+        })
+      )
       .toBeInTheDocument()
     await expect
       .element(capturesRegion.getByText('Kindle Paperwhite'))
@@ -644,8 +645,7 @@ describe('SearchDetails', () => {
         return { data: { id: 'task-id', status: 'completed' } }
       }
       if (
-        url ===
-        '/marketplace-searches/search-id/affiliate-link-capture-tasks'
+        url === '/marketplace-searches/search-id/affiliate-link-capture-tasks'
       ) {
         return {
           data: {

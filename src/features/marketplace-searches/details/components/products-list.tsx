@@ -1,6 +1,7 @@
 import { PackageOpen } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { AutomationTaskStatus } from '../schemas/search-details-schema'
 import type { MarketplaceSearchProduct } from '../schemas/search-products-schema'
@@ -31,7 +32,7 @@ export function ProductsList({
   const isActive = status === 'pending' || status === 'processing'
 
   return (
-    <section className='space-y-4' aria-labelledby='products-heading'>
+    <section className='flex flex-col gap-4' aria-labelledby='products-heading'>
       <div>
         <h2 id='products-heading' className='text-xl font-semibold'>
           Produtos descobertos
@@ -69,18 +70,20 @@ export function ProductsList({
       ) : null}
 
       {!isPending && !isError && total === 0 && status ? (
-        <div className='flex min-h-48 flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-6 text-center'>
-          <PackageOpen
-            className='size-9 text-muted-foreground'
-            aria-hidden='true'
-          />
-          <h3 className='font-semibold'>Nenhum produto encontrado ainda</h3>
-          <p className='max-w-lg text-sm text-muted-foreground'>
-            {isActive
-              ? 'A busca ainda está em andamento. Novos produtos aparecerão aqui.'
-              : 'A busca foi concluída sem produtos para exibir.'}
-          </p>
-        </div>
+        <Card>
+          <CardContent className='flex min-h-48 flex-col items-center justify-center gap-2 text-center'>
+            <PackageOpen
+              className='size-9 text-muted-foreground'
+              aria-hidden='true'
+            />
+            <h3 className='font-semibold'>Nenhum produto encontrado ainda</h3>
+            <p className='max-w-lg text-sm text-muted-foreground'>
+              {isActive
+                ? 'A busca ainda está em andamento. Novos produtos aparecerão aqui.'
+                : 'A busca foi concluída sem produtos para exibir.'}
+            </p>
+          </CardContent>
+        </Card>
       ) : null}
 
       {!isPending && !isError && total > 0 ? (

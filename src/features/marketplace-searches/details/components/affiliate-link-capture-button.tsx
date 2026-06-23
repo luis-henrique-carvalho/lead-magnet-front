@@ -29,9 +29,13 @@ export function AffiliateLinkCaptureButton({
       aria-label={`Iniciar captura de link afiliado para ${product.title}`}
     >
       {captureMutation.isPending ? (
-        <Loader2 className='animate-spin' aria-hidden='true' />
+        <Loader2
+          data-icon='inline-start'
+          className='animate-spin'
+          aria-hidden='true'
+        />
       ) : (
-        <Link2 aria-hidden='true' />
+        <Link2 data-icon='inline-start' aria-hidden='true' />
       )}
       {captureMutation.isPending ? 'Enfileirando...' : 'Capturar link afiliado'}
     </Button>

@@ -1,5 +1,13 @@
 import { CalendarClock, PackageCheck, PackageSearch } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import type {
   AutomationTaskStatus,
   MarketplaceSearchDetail,
@@ -49,20 +57,29 @@ export function SearchSummary({
   status: AutomationTaskStatus
 }) {
   return (
-    <div className='space-y-4'>
+    <div className='flex flex-col gap-4'>
       <Card>
-        <CardHeader className='gap-3 sm:grid-cols-[1fr_auto]'>
-          <div className='space-y-1'>
-            <CardTitle>
-              {marketplaceLabels[search.marketplace] ?? search.marketplace}
-            </CardTitle>
-            <p className='text-sm text-muted-foreground'>
-              Categoria: {search.category ?? 'Não disponível'} · Limite
-              solicitado: {search.requestedLimit}
-            </p>
-          </div>
-          <AutomationStatusBadge status={status} />
+        <CardHeader>
+          <CardTitle>
+            {marketplaceLabels[search.marketplace] ?? search.marketplace}
+          </CardTitle>
+          <CardDescription>
+            Categoria: {search.category ?? 'Não disponível'} · Limite
+            solicitado: {search.requestedLimit}
+          </CardDescription>
+          <CardAction>
+            <AutomationStatusBadge status={status} />
+          </CardAction>
         </CardHeader>
+        <Separator />
+        <CardContent>
+          <p className='text-sm text-muted-foreground'>
+            Concluída em:{' '}
+            {search.completedAt
+              ? dateFormatter.format(new Date(search.completedAt))
+              : 'Não disponível'}
+          </p>
+        </CardContent>
       </Card>
 
       <div className='grid gap-4 sm:grid-cols-3'>
@@ -82,13 +99,6 @@ export function SearchSummary({
           icon={CalendarClock}
         />
       </div>
-
-      <p className='text-sm text-muted-foreground'>
-        Concluída em:{' '}
-        {search.completedAt
-          ? dateFormatter.format(new Date(search.completedAt))
-          : 'Não disponível'}
-      </p>
     </div>
   )
 }
