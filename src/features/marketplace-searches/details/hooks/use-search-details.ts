@@ -13,12 +13,16 @@ export const marketplaceSearchKeys = {
     [...marketplaceSearchKeys.productsRoot(searchId), page, limit] as const,
   captures: (searchId: string) =>
     [...marketplaceSearchKeys.all, 'captures', searchId] as const,
+  capturesPage: (searchId: string, page: number, limit: number) =>
+    [...marketplaceSearchKeys.captures(searchId), page, limit] as const,
 }
 
 export function useSearchDetails(
   searchId: string,
   page: number,
-  limit: number
+  limit: number,
+  capturePage: number,
+  captureLimit: number
 ) {
   const searchQuery = useQuery({
     queryKey: marketplaceSearchKeys.detail(searchId),
@@ -30,6 +34,16 @@ export function useSearchDetails(
     queryFn: () => searchDetailsService.findProducts(searchId, page, limit),
   })
 
+  const capturesQuery = useQuery({
+    queryKey: marketplaceSearchKeys.capturesPage(
+      searchId,
+      capturePage,
+      captureLimit
+    ),
+    queryFn: () =>
+      searchDetailsService.findCaptures(searchId, capturePage, captureLimit),
+  })
+
   const taskId = searchQuery.data?.taskId ?? ''
   const taskQuery = useQuery({
     queryKey: marketplaceSearchKeys.task(taskId),
@@ -37,5 +51,5 @@ export function useSearchDetails(
     enabled: taskId.length > 0,
   })
 
-  return { searchQuery, taskQuery, productsQuery }
+  return { searchQuery, taskQuery, productsQuery, capturesQuery }
 }

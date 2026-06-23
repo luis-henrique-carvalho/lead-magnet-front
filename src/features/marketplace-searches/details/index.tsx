@@ -7,6 +7,7 @@ import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { AutomationConnectionStatus } from '@/features/automation-events/providers/automation-events-provider'
 import { ProductsList } from './components/products-list'
+import { SearchCapturesList } from './components/search-captures-list'
 import { SearchDetailsDialogs } from './components/search-details-dialogs'
 import { SearchDetailsError } from './components/search-details-error'
 import { SearchDetailsNotFound } from './components/search-details-not-found'
@@ -21,20 +22,26 @@ type SearchDetailsProps = {
   searchId: string
   page: number
   limit: number
+  capturePage: number
+  captureLimit: number
   onPaginationChange: (pagination: { page: number; limit: number }) => void
+  onCapturesPaginationChange: (pagination: {
+    capturePage: number
+    captureLimit: number
+  }) => void
 }
 
 export function SearchDetails({
   searchId,
   page,
   limit,
+  capturePage,
+  captureLimit,
   onPaginationChange,
+  onCapturesPaginationChange,
 }: SearchDetailsProps) {
-  const { searchQuery, taskQuery, productsQuery } = useSearchDetails(
-    searchId,
-    page,
-    limit
-  )
+  const { searchQuery, taskQuery, productsQuery, capturesQuery } =
+    useSearchDetails(searchId, page, limit, capturePage, captureLimit)
   const isLoading =
     searchQuery.isPending || (searchQuery.isSuccess && taskQuery.isPending)
   const hasError = searchQuery.isError || taskQuery.isError
@@ -103,6 +110,23 @@ export function SearchDetails({
             limit={limit}
             total={productsQuery.data?.total ?? 0}
             onPaginationChange={onPaginationChange}
+          />
+        ) : null}
+        {!isNotFound ? (
+          <SearchCapturesList
+            items={capturesQuery.data?.items ?? []}
+            isPending={capturesQuery.isPending}
+            isError={capturesQuery.isError}
+            onRetry={() => void capturesQuery.refetch()}
+            page={capturePage}
+            limit={captureLimit}
+            total={capturesQuery.data?.total ?? 0}
+            onPaginationChange={({ page, limit }) =>
+              onCapturesPaginationChange({
+                capturePage: page,
+                captureLimit: limit,
+              })
+            }
           />
         ) : null}
       </Main>

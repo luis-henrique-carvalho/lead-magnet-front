@@ -17,7 +17,7 @@ export function NewSearch() {
       navigate({
         to: '/marketplace-searches/$searchId',
         params: { searchId: data.searchId },
-        search: { page: 1, limit: 20 },
+        search: { page: 1, limit: 20, capturePage: 1, captureLimit: 20 },
       })
     },
   })

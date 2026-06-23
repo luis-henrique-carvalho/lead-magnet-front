@@ -3,6 +3,7 @@ import {
   automationTaskSummarySchema,
   marketplaceSearchDetailSchema,
 } from '../schemas/search-details-schema'
+import { marketplaceSearchCapturesSchema } from '../schemas/search-captures-schema'
 import { marketplaceSearchProductsSchema } from '../schemas/search-products-schema'
 
 export const searchDetailsService = {
@@ -24,5 +25,15 @@ export const searchDetailsService = {
       }
     )
     return marketplaceSearchProductsSchema.parse(response.data)
+  },
+
+  async findCaptures(searchId: string, page: number, limit: number) {
+    const response = await api.get(
+      `/marketplace-searches/${searchId}/affiliate-link-capture-tasks`,
+      {
+        params: { page, limit },
+      }
+    )
+    return marketplaceSearchCapturesSchema.parse(response.data)
   },
 }

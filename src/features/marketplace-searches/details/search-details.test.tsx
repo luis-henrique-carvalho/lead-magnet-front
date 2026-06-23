@@ -62,11 +62,20 @@ const captureProductResponse = {
 function renderScreen({
   page = 1,
   limit = 20,
+  capturePage = 1,
+  captureLimit = 20,
   onPaginationChange = vi.fn(),
+  onCapturesPaginationChange = vi.fn(),
 }: {
   page?: number
   limit?: number
+  capturePage?: number
+  captureLimit?: number
   onPaginationChange?: (pagination: { page: number; limit: number }) => void
+  onCapturesPaginationChange?: (pagination: {
+    capturePage: number
+    captureLimit: number
+  }) => void
 } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -97,7 +106,10 @@ function renderScreen({
         searchId='search-id'
         page={page}
         limit={limit}
+        capturePage={capturePage}
+        captureLimit={captureLimit}
         onPaginationChange={onPaginationChange}
+        onCapturesPaginationChange={onCapturesPaginationChange}
       />
     ),
   })
@@ -464,10 +476,15 @@ describe('SearchDetails', () => {
     const onPaginationChange = vi.fn()
 
     const screen = await renderScreen({ onPaginationChange })
+    const productsRegion = screen.getByRole('region', {
+      name: 'Produtos descobertos',
+    })
 
-    await expect.element(screen.getByText('Página 1 de 3')).toBeInTheDocument()
+    await expect
+      .element(productsRegion.getByText('Página 1 de 3'))
+      .toBeInTheDocument()
     await userEvent.click(
-      screen.getByRole('button', { name: 'Próxima página' })
+      productsRegion.getByRole('button', { name: 'Próxima página' })
     )
 
     expect(onPaginationChange).toHaveBeenCalledWith({ page: 2, limit: 20 })
@@ -488,8 +505,11 @@ describe('SearchDetails', () => {
       limit: 20,
       onPaginationChange,
     })
+    const productsRegion = screen.getByRole('region', {
+      name: 'Produtos descobertos',
+    })
     await userEvent.selectOptions(
-      screen.getByRole('combobox', { name: 'Itens por página' }),
+      productsRegion.getByRole('combobox', { name: 'Itens por página' }),
       '50'
     )
 
@@ -540,5 +560,154 @@ describe('SearchDetails', () => {
         screen.getByText('A busca foi concluída sem produtos para exibir.')
       )
       .toBeInTheDocument()
+  })
+
+  it('exibe as capturas de link afiliado relacionadas à busca', async () => {
+    let capturesParams: unknown
+    vi.spyOn(api, 'get').mockImplementation(async (url, config) => {
+      if (url === '/marketplace-searches/search-id') return { data: search }
+      if (url === '/automation-tasks/task-id') {
+        return { data: { id: 'task-id', status: 'completed' } }
+      }
+      if (
+        url ===
+        '/marketplace-searches/search-id/affiliate-link-capture-tasks'
+      ) {
+        capturesParams = config?.params
+        return {
+          data: {
+            items: [
+              {
+                taskId: 'capture-task-id',
+                status: 'completed',
+                marketplace: 'amazon',
+                productId: 'product-id',
+                productTitle: 'Kindle Paperwhite',
+                originalProductUrl: 'https://amazon.com.br/dp/AMZ-1',
+                capturedAffiliateUrl: 'https://amzn.to/example',
+                taskCreatedAt: '2026-06-14T10:00:00.000Z',
+                startedAt: '2026-06-14T10:00:10.000Z',
+                finishedAt: '2026-06-14T10:00:30.000Z',
+                capturedAt: '2026-06-14T10:00:30.000Z',
+              },
+            ],
+            page: 2,
+            limit: 10,
+            total: 12,
+          },
+        }
+      }
+
+      return { data: { items: [], page: 1, limit: 20, total: 0 } }
+    })
+
+    const screen = await renderScreen({ capturePage: 2, captureLimit: 10 })
+    const capturesRegion = screen.getByRole('region', {
+      name: 'Capturas de link afiliado',
+    })
+
+    await expect
+      .element(capturesRegion.getByRole('heading', {
+        name: 'Capturas de link afiliado',
+      }))
+      .toBeInTheDocument()
+    await expect
+      .element(capturesRegion.getByText('Kindle Paperwhite'))
+      .toBeInTheDocument()
+    await expect
+      .element(capturesRegion.getByText('https://amzn.to/example'))
+      .toBeInTheDocument()
+    await expect
+      .element(capturesRegion.getByText('Concluída', { exact: true }))
+      .toBeInTheDocument()
+    await expect
+      .element(capturesRegion.getByText(/Criada: 14\/06\/2026/))
+      .toBeInTheDocument()
+    await expect
+      .element(capturesRegion.getByText(/Iniciada: 14\/06\/2026/))
+      .toBeInTheDocument()
+    await expect
+      .element(capturesRegion.getByText(/Finalizada: 14\/06\/2026/))
+      .toBeInTheDocument()
+    expect(capturesParams).toEqual({ page: 2, limit: 10 })
+  })
+
+  it('permite copiar, abrir e diagnosticar uma captura que exige ação manual', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    })
+    vi.spyOn(api, 'get').mockImplementation(async (url) => {
+      if (url === '/marketplace-searches/search-id') return { data: search }
+      if (url === '/automation-tasks/task-id') {
+        return { data: { id: 'task-id', status: 'completed' } }
+      }
+      if (
+        url ===
+        '/marketplace-searches/search-id/affiliate-link-capture-tasks'
+      ) {
+        return {
+          data: {
+            items: [
+              {
+                taskId: 'manual-task-id',
+                status: 'manual_required',
+                marketplace: 'amazon',
+                productId: 'product-id',
+                productTitle: 'Kindle com bloqueio',
+                originalProductUrl: 'https://amazon.com.br/dp/AMZ-2',
+                capturedAffiliateUrl: 'https://amzn.to/manual',
+                taskCreatedAt: '2026-06-14T10:00:00.000Z',
+                startedAt: '2026-06-14T10:00:10.000Z',
+                finishedAt: null,
+                capturedAt: null,
+              },
+            ],
+            page: 1,
+            limit: 20,
+            total: 1,
+          },
+        }
+      }
+
+      return { data: { items: [], page: 1, limit: 20, total: 0 } }
+    })
+
+    const screen = await renderScreen()
+    const capturesRegion = screen.getByRole('region', {
+      name: 'Capturas de link afiliado',
+    })
+
+    await expect
+      .element(capturesRegion.getByText('Ação manual requerida'))
+      .toBeInTheDocument()
+
+    await userEvent.click(
+      capturesRegion.getByRole('button', {
+        name: 'Copiar link afiliado de Kindle com bloqueio',
+      })
+    )
+
+    expect(writeText).toHaveBeenCalledWith('https://amzn.to/manual')
+    await expect
+      .element(screen.getByText('Link afiliado copiado.'))
+      .toBeInTheDocument()
+
+    const affiliateLink = capturesRegion.getByRole('link', {
+      name: 'Abrir link afiliado de Kindle com bloqueio',
+    })
+    await expect.element(affiliateLink).toHaveAttribute('target', '_blank')
+    await expect
+      .element(affiliateLink)
+      .toHaveAttribute('rel', 'noopener noreferrer')
+
+    await expect
+      .element(
+        capturesRegion.getByRole('link', {
+          name: 'Abrir diagnóstico da captura Kindle com bloqueio',
+        })
+      )
+      .toHaveAttribute('href', '/automation-tasks/manual-task-id')
   })
 })
