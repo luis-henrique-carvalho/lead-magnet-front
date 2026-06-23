@@ -160,6 +160,16 @@ describe('SearchDetails', () => {
     await expect
       .element(screen.getByText(/Concluída em: 14\/06\/2026/))
       .toBeInTheDocument()
+    await expect
+      .element(screen.getByText('Task ID: task-id'))
+      .toBeInTheDocument()
+    await expect
+      .element(
+        screen.getByRole('link', {
+          name: 'Abrir diagnóstico da task principal task-id',
+        })
+      )
+      .toHaveAttribute('href', '/automation-tasks/task-id')
   })
 
   it('permite tentar novamente após uma falha temporária', async () => {
@@ -269,6 +279,78 @@ describe('SearchDetails', () => {
     await expect
       .element(productLink)
       .toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
+  it('abre o histórico de recorrência do produto e navega para a busca relacionada', async () => {
+    let occurrencesParams: unknown
+    vi.spyOn(api, 'get').mockImplementation(async (url, config) => {
+      if (url === '/marketplace-searches/search-id') return { data: search }
+      if (url === '/automation-tasks/task-id') {
+        return { data: { id: 'task-id', status: 'completed' } }
+      }
+      if (url === '/marketplace-searches/search-id/products') {
+        return { data: captureProductResponse }
+      }
+      if (url === '/marketplace-products/product-id/searches') {
+        occurrencesParams = config?.params
+        return {
+          data: {
+            items: [
+              {
+                searchId: 'related-search-id',
+                taskId: 'related-task-id',
+                marketplace: 'amazon',
+                query: 'kindle promoção',
+                category: 'Leitores digitais',
+                requestedLimit: 20,
+                discoveredAt: '2026-06-15T12:30:00.000Z',
+              },
+            ],
+            page: 1,
+            limit: 10,
+            total: 1,
+            legacyAssociationsExcluded: true,
+          },
+        }
+      }
+
+      return { data: { items: [], page: 1, limit: 20, total: 0 } }
+    })
+
+    const screen = await renderScreen()
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Ver histórico de recorrência de Kindle Paperwhite',
+      })
+    )
+
+    const dialog = screen.getByRole('dialog', {
+      name: 'Histórico de recorrência',
+    })
+
+    await expect.element(dialog).toBeInTheDocument()
+    await expect
+      .element(dialog.getByText('kindle promoção'))
+      .toBeInTheDocument()
+    await expect
+      .element(dialog.getByText('Leitores digitais'))
+      .toBeInTheDocument()
+    await expect.element(dialog.getByText('Amazon')).toBeInTheDocument()
+    await expect.element(dialog.getByText(/15\/06\/2026/)).toBeInTheDocument()
+    await expect
+      .element(
+        dialog.getByText(
+          'Associações legadas não comprovadas não estão incluídas neste histórico.'
+        )
+      )
+      .toBeInTheDocument()
+    await expect
+      .element(
+        dialog.getByRole('link', { name: /Abrir busca kindle promoção/ })
+      )
+      .toHaveAttribute('href', '/marketplace-searches/related-search-id')
+    expect(occurrencesParams).toEqual({ page: 1, limit: 10 })
   })
 
   it('enfileira a captura de link afiliado com os dados do produto e da busca', async () => {
@@ -614,6 +696,9 @@ describe('SearchDetails', () => {
       .toBeInTheDocument()
     await expect
       .element(capturesRegion.getByText('Kindle Paperwhite'))
+      .toBeInTheDocument()
+    await expect
+      .element(capturesRegion.getByText('capture-task-id'))
       .toBeInTheDocument()
     await expect
       .element(capturesRegion.getByText('https://amzn.to/example'))

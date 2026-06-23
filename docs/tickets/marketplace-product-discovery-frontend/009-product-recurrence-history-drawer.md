@@ -28,3 +28,24 @@ Implementação de um Drawer (painel lateral deslizante) ou Modal que apresenta 
 ## Blocked by
 
 [004-products-discovered-list-url-pagination.md](file:///home/luis/Documentos/Git/lead_magnet/lead-magnet-front/docs/tickets/004-products-discovered-list-url-pagination.md)
+
+## Result
+
+Implementado como Drawer responsivo em cada card de produto descoberto, acionado pelo botão "Histórico de recorrência".
+
+Componente:
+- `ProductRecurrenceHistoryDrawer` usa o Sheet/Radix existente, preservando foco, teclado e botão de fechar acessível.
+- O endpoint só é consultado quando o Drawer é aberto.
+- O painel lista query, categoria, marketplace e data formatada em `pt-BR`.
+- Cada ocorrência é um link para `/marketplace-searches/:searchId`.
+- A nota "Associações legadas não comprovadas não estão incluídas neste histórico." fica visível no topo do painel.
+
+Endpoint REST integrado:
+- `GET /marketplace-products/:productId/searches` com `page=1` e `limit=10` no painel.
+
+Fluxos testados:
+- Abrir o Drawer pelo produto.
+- Carregar ocorrências pelo endpoint de histórico.
+- Exibir query, categoria, marketplace e data em `pt-BR`.
+- Navegar diretamente para a busca relacionada pelo item do histórico.
+- Exibir a nota de associações legadas.

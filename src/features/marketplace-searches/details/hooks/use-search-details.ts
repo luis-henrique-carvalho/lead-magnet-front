@@ -15,6 +15,14 @@ export const marketplaceSearchKeys = {
     [...marketplaceSearchKeys.all, 'captures', searchId] as const,
   capturesPage: (searchId: string, page: number, limit: number) =>
     [...marketplaceSearchKeys.captures(searchId), page, limit] as const,
+  productOccurrences: (productId: string, page: number, limit: number) =>
+    [
+      ...marketplaceSearchKeys.all,
+      'product-occurrences',
+      productId,
+      page,
+      limit,
+    ] as const,
 }
 
 export function useSearchDetails(
@@ -52,4 +60,23 @@ export function useSearchDetails(
   })
 
   return { searchQuery, taskQuery, productsQuery, capturesQuery }
+}
+
+export function useProductSearchOccurrences({
+  productId,
+  page,
+  limit,
+  enabled,
+}: {
+  productId: string
+  page: number
+  limit: number
+  enabled: boolean
+}) {
+  return useQuery({
+    queryKey: marketplaceSearchKeys.productOccurrences(productId, page, limit),
+    queryFn: () =>
+      searchDetailsService.findProductSearchOccurrences(productId, page, limit),
+    enabled,
+  })
 }

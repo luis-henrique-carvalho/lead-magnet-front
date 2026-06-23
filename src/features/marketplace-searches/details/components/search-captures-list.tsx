@@ -58,6 +58,10 @@ function SearchCaptureCard({ item }: { item: MarketplaceSearchCapture }) {
       <CardContent>
         <dl className='grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4'>
           <div>
+            <dt className='text-muted-foreground'>Task ID</dt>
+            <dd className='font-mono text-xs break-all'>{item.taskId}</dd>
+          </div>
+          <div>
             <dt className='text-muted-foreground'>Criada</dt>
             <dd>Criada: {formatDate(item.taskCreatedAt)}</dd>
           </div>

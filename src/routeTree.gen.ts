@@ -24,6 +24,7 @@ import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-p
 import { Route as AuthenticatedMarketplaceSearchesIndexRouteImport } from './routes/_authenticated/marketplace-searches/index'
 import { Route as AuthenticatedAutomationTasksIndexRouteImport } from './routes/_authenticated/automation-tasks/index'
 import { Route as AuthenticatedMarketplaceSearchesSearchIdRouteImport } from './routes/_authenticated/marketplace-searches/$searchId'
+import { Route as AuthenticatedAutomationTasksTaskIdRouteImport } from './routes/_authenticated/automation-tasks/$taskId'
 import { Route as AuthenticatedMarketplaceSearchesNewIndexRouteImport } from './routes/_authenticated/marketplace-searches/new/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -103,6 +104,12 @@ const AuthenticatedMarketplaceSearchesSearchIdRoute =
     path: '/marketplace-searches/$searchId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAutomationTasksTaskIdRoute =
+  AuthenticatedAutomationTasksTaskIdRouteImport.update({
+    id: '/automation-tasks/$taskId',
+    path: '/automation-tasks/$taskId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMarketplaceSearchesNewIndexRoute =
   AuthenticatedMarketplaceSearchesNewIndexRouteImport.update({
     id: '/marketplace-searches/new/',
@@ -122,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/automation-tasks/$taskId': typeof AuthenticatedAutomationTasksTaskIdRoute
   '/marketplace-searches/$searchId': typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   '/automation-tasks/': typeof AuthenticatedAutomationTasksIndexRoute
   '/marketplace-searches/': typeof AuthenticatedMarketplaceSearchesIndexRoute
@@ -139,6 +147,7 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/automation-tasks/$taskId': typeof AuthenticatedAutomationTasksTaskIdRoute
   '/marketplace-searches/$searchId': typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   '/automation-tasks': typeof AuthenticatedAutomationTasksIndexRoute
   '/marketplace-searches': typeof AuthenticatedMarketplaceSearchesIndexRoute
@@ -158,6 +167,7 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/automation-tasks/$taskId': typeof AuthenticatedAutomationTasksTaskIdRoute
   '/_authenticated/marketplace-searches/$searchId': typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   '/_authenticated/automation-tasks/': typeof AuthenticatedAutomationTasksIndexRoute
   '/_authenticated/marketplace-searches/': typeof AuthenticatedMarketplaceSearchesIndexRoute
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/automation-tasks/$taskId'
     | '/marketplace-searches/$searchId'
     | '/automation-tasks/'
     | '/marketplace-searches/'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/automation-tasks/$taskId'
     | '/marketplace-searches/$searchId'
     | '/automation-tasks'
     | '/marketplace-searches'
@@ -212,6 +224,7 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/automation-tasks/$taskId'
     | '/_authenticated/marketplace-searches/$searchId'
     | '/_authenticated/automation-tasks/'
     | '/_authenticated/marketplace-searches/'
@@ -339,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMarketplaceSearchesSearchIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/automation-tasks/$taskId': {
+      id: '/_authenticated/automation-tasks/$taskId'
+      path: '/automation-tasks/$taskId'
+      fullPath: '/automation-tasks/$taskId'
+      preLoaderRoute: typeof AuthenticatedAutomationTasksTaskIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/marketplace-searches/new/': {
       id: '/_authenticated/marketplace-searches/new/'
       path: '/marketplace-searches/new'
@@ -351,6 +371,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedAutomationTasksTaskIdRoute: typeof AuthenticatedAutomationTasksTaskIdRoute
   AuthenticatedMarketplaceSearchesSearchIdRoute: typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   AuthenticatedAutomationTasksIndexRoute: typeof AuthenticatedAutomationTasksIndexRoute
   AuthenticatedMarketplaceSearchesIndexRoute: typeof AuthenticatedMarketplaceSearchesIndexRoute
@@ -359,6 +380,8 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedAutomationTasksTaskIdRoute:
+    AuthenticatedAutomationTasksTaskIdRoute,
   AuthenticatedMarketplaceSearchesSearchIdRoute:
     AuthenticatedMarketplaceSearchesSearchIdRoute,
   AuthenticatedAutomationTasksIndexRoute:

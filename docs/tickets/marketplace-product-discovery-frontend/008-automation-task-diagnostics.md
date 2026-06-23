@@ -29,3 +29,27 @@ Desenvolvimento da tela de diagnóstico técnico de automação (`/automation-ta
 ## Blocked by
 
 [003-basic-search-details-view.md](file:///home/luis/Documentos/Git/lead_magnet/lead-magnet-front/docs/tickets/003-basic-search-details-view.md)
+
+## Result
+
+Implementado em `/automation-tasks/:taskId` com carregamento direto por URL e paginação de tentativas via `attemptPage`/`attemptLimit`.
+
+Estrutura da página:
+- Cabeçalho operacional com busca, tema, configurações e perfil.
+- Resumo técnico da task com tipo, marketplace, estado, contagem de tentativas, timestamps e erro/classificação quando aplicável.
+- Tabela paginada de tentativas com número, job, estado, erro, início e fim.
+- Seções de predecessoras, bloqueios pendentes e sucessoras com links diretos para tasks relacionadas.
+- Atalho de retorno para `/marketplace-searches/:searchId` quando o `result.searchId` existe; fallback para `/marketplace-searches`.
+
+Endpoints REST integrados:
+- `GET /automation-tasks/:taskId`
+- `GET /automation-tasks/:taskId/attempts`
+- `GET /automation-tasks/:taskId/dependencies`
+- `GET /automation-tasks/:taskId/dependents`
+- `GET /automation-tasks/:taskId/dependencies/pending`
+
+Fluxos testados:
+- Renderização de dados básicos, erro, classificação, tentativas e dependências.
+- Navegação por links para predecessoras/sucessoras.
+- Retorno para busca de origem sem expor apenas IDs técnicos.
+- Deep link `/automation-tasks/:taskId` com sincronização da paginação de tentativas na URL.

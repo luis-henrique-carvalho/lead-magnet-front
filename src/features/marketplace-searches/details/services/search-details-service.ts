@@ -1,9 +1,10 @@
 import { api } from '@/lib/api-client'
+import { productSearchOccurrencesSchema } from '../schemas/product-search-occurrences-schema'
+import { marketplaceSearchCapturesSchema } from '../schemas/search-captures-schema'
 import {
   automationTaskSummarySchema,
   marketplaceSearchDetailSchema,
 } from '../schemas/search-details-schema'
-import { marketplaceSearchCapturesSchema } from '../schemas/search-captures-schema'
 import { marketplaceSearchProductsSchema } from '../schemas/search-products-schema'
 
 export const searchDetailsService = {
@@ -35,5 +36,19 @@ export const searchDetailsService = {
       }
     )
     return marketplaceSearchCapturesSchema.parse(response.data)
+  },
+
+  async findProductSearchOccurrences(
+    productId: string,
+    page: number,
+    limit: number
+  ) {
+    const response = await api.get(
+      `/marketplace-products/${productId}/searches`,
+      {
+        params: { page, limit },
+      }
+    )
+    return productSearchOccurrencesSchema.parse(response.data)
   },
 }

@@ -1,4 +1,10 @@
-import { CalendarClock, PackageCheck, PackageSearch } from 'lucide-react'
+import {
+  CalendarClock,
+  ExternalLink,
+  PackageCheck,
+  PackageSearch,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardAction,
@@ -73,12 +79,28 @@ export function SearchSummary({
         </CardHeader>
         <Separator />
         <CardContent>
-          <p className='text-sm text-muted-foreground'>
-            Concluída em:{' '}
-            {search.completedAt
-              ? dateFormatter.format(new Date(search.completedAt))
-              : 'Não disponível'}
-          </p>
+          <div className='flex flex-wrap items-center justify-between gap-3'>
+            <div className='text-sm'>
+              <p className='text-muted-foreground'>
+                Concluída em:{' '}
+                {search.completedAt
+                  ? dateFormatter.format(new Date(search.completedAt))
+                  : 'Não disponível'}
+              </p>
+              <p className='font-mono text-xs break-all text-muted-foreground'>
+                Task ID: {search.taskId}
+              </p>
+            </div>
+            <Button asChild variant='outline' size='sm'>
+              <a
+                href={`/automation-tasks/${search.taskId}`}
+                aria-label={`Abrir diagnóstico da task principal ${search.taskId}`}
+              >
+                Ver task principal
+                <ExternalLink data-icon='inline-end' aria-hidden='true' />
+              </a>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
