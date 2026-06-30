@@ -123,6 +123,7 @@ export const historyColumns: ColumnDef<SearchHistoryItem>[] = [
           <Link
             to='/automation-tasks/$taskId'
             params={{ taskId }}
+            search={{ attemptPage: 1, attemptLimit: 20 }}
             className='flex items-center gap-1 text-xs text-muted-foreground hover:text-primary hover:underline'
             title={`Diagnóstico da task ${taskId}`}
           >

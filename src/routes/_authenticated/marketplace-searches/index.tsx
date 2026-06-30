@@ -10,6 +10,8 @@ const searchSchema = z.object({
   status: z.string().optional().catch(''),
 })
 
+import { type NavigateFn } from '@/hooks/use-table-url-state'
+
 function HistoryRoute() {
   const { page, limit, query, marketplace, status } = Route.useSearch()
   const navigate = Route.useNavigate()
@@ -21,7 +23,7 @@ function HistoryRoute() {
       query={query}
       marketplace={marketplace}
       status={status}
-      navigate={navigate}
+      navigate={navigate as unknown as NavigateFn}
     />
   )
 }
