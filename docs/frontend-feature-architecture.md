@@ -20,7 +20,23 @@ O principal objetivo desta arquitetura é promover a modularidade, consistência
 > 5. Código compartilhado com outras telas da mesma feature;
 > 6. Código compartilhado com outras features.
 >
+> Antes de criar qualquer componente, layout, tabela, formulário, filtro, diálogo, drawer, botão, badge, skeleton, empty state ou página customizada, a LLM **deve obrigatoriamente** verificar primeiro os componentes já existentes em `src/components` e as telas de referência em `src/features/template`. Componentes e padrões já prontos devem ser reutilizados sempre que atenderem ao caso de uso com adaptação razoável.
+>
 > A LLM **não deve** colocar chamadas HTTP, queries, mutations ou regras de negócio diretamente em componentes de apresentação. Tampouco deve agrupar arquivos de diferentes telas em diretórios genéricos globais no nível raiz da feature. A estrutura por tela/subfeature deve ser sempre respeitada.
+
+---
+
+## Regra Obrigatória de Reutilização Visual
+
+Antes de implementar qualquer UI nova, siga esta ordem obrigatória:
+
+1. **Reutilizar componentes globais existentes**: procure primeiro em `src/components`, especialmente `src/components/ui`, `src/components/data-table`, `src/components/layout` e componentes utilitários como `confirm-dialog`, `select-dropdown`, `date-picker`, `search`, `theme-switch`, `config-drawer` e `profile-dropdown`.
+2. **Consultar telas de template**: verifique `src/features/template` antes de criar páginas, tabelas, formulários, filtros, dialogs, drawers, ações de linha, empty states ou padrões de composição. As telas de `tasks` e `users` são referências prioritárias para data tables, toolbars, colunas, ações e providers.
+3. **Adaptar padrões existentes**: quando um componente ou tela de referência resolver a maior parte do problema, adapte o padrão dentro da feature em vez de criar uma solução visual do zero.
+4. **Criar componente customizado apenas como última opção**: só crie um componente novo quando não houver componente global, shadcn instalado ou padrão de template que atenda ao comportamento esperado de forma razoável.
+5. **Manter componentes customizados pequenos e locais**: componentes criados para uma única tela devem ficar em `src/features/nome-da-feature/nome-da-tela/components/`. Só mova para `shared` ou `src/components` quando houver reutilização real.
+
+Essa regra vale para qualquer implementação ou refatoração de frontend. A preferência padrão é sempre por composição com componentes existentes, não por recriação visual.
 
 ---
 
@@ -231,11 +247,14 @@ export function useCreateSearch(
 
 ## Checklist para Criação de uma Nova Feature/Tela
 
+- [ ] Verificar componentes existentes em `src/components` antes de criar qualquer componente novo
+- [ ] Verificar telas de referência em `src/features/template` antes de criar página, tabela, formulário, filtro, dialog ou drawer customizado
+- [ ] Reutilizar componentes shadcn já instalados sempre que atenderem ao caso de uso
 - [ ] Criar pasta correspondente em `src/features/nome-da-feature/nome-da-tela`
 - [ ] Definir schemas de validação Zod e tipos TypeScript em `schemas/`
 - [ ] Criar funções de API no arquivo correspondente dentro de `services/`
 - [ ] Implementar queries/mutations do React Query e controle de negócio em `hooks/`
-- [ ] Criar componentes visuais limpos in `components/`
+- [ ] Criar componentes visuais locais em `components/` apenas quando não houver componente ou padrão existente que resolva o caso com adaptação razoável
 - [ ] Criar testes automatizados para os componentes/hooks
 - [ ] Criar index local da subfeature exportando a tela principal
 - [ ] Registrar exportações no index público do módulo principal (`src/features/nome-da-feature/index.ts`)
