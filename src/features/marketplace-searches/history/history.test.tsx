@@ -123,13 +123,16 @@ describe('HistoryScreen', () => {
   afterEach(() => vi.restoreAllMocks())
 
   it('exibe a listagem com os dados da API', async () => {
-    const getSpy = vi.spyOn(api, 'get').mockResolvedValue({ data: mockHistoryResponse })
+    const getSpy = vi
+      .spyOn(api, 'get')
+      .mockResolvedValue({ data: mockHistoryResponse })
 
     const screen = await renderScreen()
 
     // check title
-    await expect.element(screen.getByRole('heading', { name: 'Histórico de Buscas' })).toBeInTheDocument()
-
+    await expect
+      .element(screen.getByRole('heading', { name: 'Histórico de Buscas' }))
+      .toBeInTheDocument()
 
     // check listing items
     await expect.element(screen.getByText('kindle')).toBeInTheDocument()
@@ -142,8 +145,6 @@ describe('HistoryScreen', () => {
     await expect.element(screen.getByText('Falhou')).toBeInTheDocument()
 
     // check fail error displays
-    await expect.element(screen.getByText('Timeout error occurred')).toBeInTheDocument()
-
     expect(getSpy).toHaveBeenCalledWith('/marketplace-searches', {
       params: {
         page: 1,
@@ -156,7 +157,8 @@ describe('HistoryScreen', () => {
   })
 
   it('exibe o estado de erro com a opção de tentar novamente', async () => {
-    const getSpy = vi.spyOn(api, 'get')
+    const getSpy = vi
+      .spyOn(api, 'get')
       .mockRejectedValueOnce(new Error('Network Error'))
       .mockResolvedValueOnce({ data: mockHistoryResponse })
 
@@ -182,8 +184,12 @@ describe('HistoryScreen', () => {
 
     const screen = await renderScreen()
 
-    await expect.element(screen.getByTestId('empty-state-no-searches')).toBeInTheDocument()
-    await expect.element(screen.getByText('Nenhuma busca cadastrada')).toBeInTheDocument()
+    await expect
+      .element(screen.getByTestId('empty-state-no-searches'))
+      .toBeInTheDocument()
+    await expect
+      .element(screen.getByText('Nenhuma busca cadastrada'))
+      .toBeInTheDocument()
   })
 
   it('exibe tabela vazia com texto apropriado quando filtros reduzem resultados a zero', async () => {
@@ -194,6 +200,8 @@ describe('HistoryScreen', () => {
     const screen = await renderScreen({ query: 'non-existing-term' })
 
     // table toolbar is shown, and "Nenhum histórico encontrado." is in the table cell
-    await expect.element(screen.getByText('Nenhum histórico encontrado.')).toBeInTheDocument()
+    await expect
+      .element(screen.getByText('Nenhum histórico encontrado.'))
+      .toBeInTheDocument()
   })
 })

@@ -1,5 +1,5 @@
-import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from '@tanstack/react-router'
+import { type ColumnDef } from '@tanstack/react-table'
 import { ExternalLink } from 'lucide-react'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { AutomationStatusBadge } from '../../details/components/automation-status-badge'
@@ -61,15 +61,9 @@ export const historyColumns: ColumnDef<SearchHistoryItem>[] = [
     ),
     cell: ({ row }) => {
       const status = row.original.task.status
-      const error = row.original.task.error
       return (
-        <div className='flex flex-col gap-1 items-start'>
+        <div className='flex flex-col items-start gap-1'>
           <AutomationStatusBadge status={status} />
-          {error && (status === 'failed' || status === 'manual_required') && (
-            <span className='text-xs text-destructive max-w-xs truncate' title={error}>
-              {error}
-            </span>
-          )}
         </div>
       )
     },
@@ -122,7 +116,7 @@ export const historyColumns: ColumnDef<SearchHistoryItem>[] = [
             to='/marketplace-searches/$searchId'
             params={{ searchId }}
             search={{ page: 1, limit: 20, capturePage: 1, captureLimit: 20 }}
-            className='text-sm text-primary hover:underline font-medium'
+            className='text-sm font-medium text-primary hover:underline'
           >
             Detalhes
           </Link>

@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
-import { getRouteApi } from '@tanstack/react-router'
+import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   type SortingState,
   type VisibilityState,
@@ -12,8 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -22,9 +20,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { cn } from '@/lib/utils'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { historyColumns as columns } from './history-columns'
 import { type SearchHistoryItem } from '../schemas/search-history-schema'
+import { historyColumns as columns } from './history-columns'
 
 type DataTableProps = {
   data: SearchHistoryItem[]
@@ -34,7 +33,7 @@ type DataTableProps = {
   query?: string
   marketplace?: string
   status?: string
-  navigate: any
+  navigate: NavigateFn
 }
 
 const marketplaces = [
@@ -64,7 +63,13 @@ export function HistoryTable({
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    limit: false,
+    fountCount: false,
+    savedCount: false,
+    createdAt: false,
+    completedAt: false,
+  })
 
   const searchRecord = useMemo(
     () => ({
@@ -88,22 +93,27 @@ export function HistoryTable({
   } = useTableUrlState({
     search: searchRecord,
     navigate,
-    pagination: { defaultPage: 1, defaultPageSize: 20, pageKey: 'page', pageSizeKey: 'limit' },
+    pagination: {
+      defaultPage: 1,
+      defaultPageSize: 20,
+      pageKey: 'page',
+      pageSizeKey: 'limit',
+    },
     globalFilter: { enabled: true, key: 'query' },
     columnFilters: [
       {
         columnId: 'marketplace',
         searchKey: 'marketplace',
         type: 'array',
-        serialize: (val: any) => (Array.isArray(val) ? val[0] : val),
-        deserialize: (val: any) => (val ? [val] : []),
+        serialize: (val: unknown) => (Array.isArray(val) ? val[0] : val),
+        deserialize: (val: unknown) => (val ? [val] : []),
       },
       {
         columnId: 'status',
         searchKey: 'status',
         type: 'array',
-        serialize: (val: any) => (Array.isArray(val) ? val[0] : val),
-        deserialize: (val: any) => (val ? [val] : []),
+        serialize: (val: unknown) => (Array.isArray(val) ? val[0] : val),
+        deserialize: (val: unknown) => (val ? [val] : []),
       },
     ],
   })
