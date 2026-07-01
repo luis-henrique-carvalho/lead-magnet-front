@@ -205,6 +205,12 @@ describe('AutomationTaskDiagnostics', () => {
       .element(summary.getByText('Sessão inválida'))
       .toBeInTheDocument()
     await expect.element(summary.getByText('2 tentativas')).toBeInTheDocument()
+    await expect.element(summary.getByText('Queue wait')).toBeInTheDocument()
+    await expect.element(summary.getByText('10.0s')).toBeInTheDocument()
+    await expect.element(summary.getByText('Execution')).toBeInTheDocument()
+    await expect.element(summary.getByText('50.0s')).toBeInTheDocument()
+    await expect.element(summary.getByText('Total')).toBeInTheDocument()
+    await expect.element(summary.getByText('60.0s')).toBeInTheDocument()
     await expect
       .element(
         screen.getByRole('region', { name: 'Tentativas' }).getByText('job-2')

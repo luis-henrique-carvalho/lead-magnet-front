@@ -46,7 +46,7 @@ type AutomationTaskDiagnosticsProps = {
 
 const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
   dateStyle: 'short',
-  timeStyle: 'short',
+  timeStyle: 'medium',
 })
 
 const marketplaceLabels: Record<string, string> = {
@@ -79,6 +79,26 @@ const errorTypeLabels: Record<string, string> = {
 function formatDate(value: string | null | undefined) {
   if (!value) return 'Não disponível'
   return dateFormatter.format(new Date(value))
+}
+
+function diffInMs(
+  start: string | null | undefined,
+  end: string | null | undefined
+) {
+  if (!start || !end) return null
+
+  const startMs = new Date(start).getTime()
+  const endMs = new Date(end).getTime()
+
+  if (Number.isNaN(startMs) || Number.isNaN(endMs)) return null
+
+  return Math.max(0, endMs - startMs)
+}
+
+function formatDuration(ms: number | null) {
+  if (ms === null) return 'Não disponível'
+
+  return `${(ms / 1000).toFixed(1)}s`
 }
 
 function labelFromMap(
@@ -130,6 +150,9 @@ function SummaryCard({
 
 function TaskSummary({ task }: { task: AutomationTaskDiagnosticsData }) {
   const origin = getOriginLink(task)
+  const queueWait = diffInMs(task.createdAt, task.startedAt)
+  const execution = diffInMs(task.startedAt, task.finishedAt)
+  const total = diffInMs(task.createdAt, task.finishedAt)
 
   return (
     <section className='flex flex-col gap-4' aria-labelledby='task-summary'>
@@ -198,6 +221,21 @@ function TaskSummary({ task }: { task: AutomationTaskDiagnosticsData }) {
         <div>
           <dt className='text-muted-foreground'>Finalizada</dt>
           <dd>{formatDate(task.finishedAt)}</dd>
+        </div>
+      </dl>
+
+      <dl className='grid gap-3 text-sm md:grid-cols-3'>
+        <div className='rounded-md border p-3'>
+          <dt className='text-muted-foreground'>Queue wait</dt>
+          <dd className='font-medium'>{formatDuration(queueWait)}</dd>
+        </div>
+        <div className='rounded-md border p-3'>
+          <dt className='text-muted-foreground'>Execution</dt>
+          <dd className='font-medium'>{formatDuration(execution)}</dd>
+        </div>
+        <div className='rounded-md border p-3'>
+          <dt className='text-muted-foreground'>Total</dt>
+          <dd className='font-medium'>{formatDuration(total)}</dd>
         </div>
       </dl>
 
