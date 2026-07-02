@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
+import { userEvent } from 'vitest/browser'
 import { api } from '@/lib/api-client'
 import { DirectionProvider } from '@/context/direction-provider'
 import { LayoutProvider } from '@/context/layout-provider'
@@ -154,6 +155,21 @@ describe('HistoryScreen', () => {
         status: undefined,
       },
     })
+  })
+
+  it('abre a sheet para iniciar uma nova busca', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({ data: mockHistoryResponse })
+
+    const screen = await renderScreen()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Nova Busca' }))
+
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Nova Busca' }))
+      .toBeInTheDocument()
+    await expect
+      .element(screen.getByLabelText('Palavra-chave'))
+      .toBeInTheDocument()
   })
 
   it('exibe o estado de erro com a opção de tentar novamente', async () => {

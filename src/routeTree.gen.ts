@@ -25,7 +25,6 @@ import { Route as AuthenticatedMarketplaceSearchesIndexRouteImport } from './rou
 import { Route as AuthenticatedAutomationTasksIndexRouteImport } from './routes/_authenticated/automation-tasks/index'
 import { Route as AuthenticatedMarketplaceSearchesSearchIdRouteImport } from './routes/_authenticated/marketplace-searches/$searchId'
 import { Route as AuthenticatedAutomationTasksTaskIdRouteImport } from './routes/_authenticated/automation-tasks/$taskId'
-import { Route as AuthenticatedMarketplaceSearchesNewIndexRouteImport } from './routes/_authenticated/marketplace-searches/new/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -110,12 +109,6 @@ const AuthenticatedAutomationTasksTaskIdRoute =
     path: '/automation-tasks/$taskId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedMarketplaceSearchesNewIndexRoute =
-  AuthenticatedMarketplaceSearchesNewIndexRouteImport.update({
-    id: '/marketplace-searches/new/',
-    path: '/marketplace-searches/new/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -133,7 +126,6 @@ export interface FileRoutesByFullPath {
   '/marketplace-searches/$searchId': typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   '/automation-tasks/': typeof AuthenticatedAutomationTasksIndexRoute
   '/marketplace-searches/': typeof AuthenticatedMarketplaceSearchesIndexRoute
-  '/marketplace-searches/new/': typeof AuthenticatedMarketplaceSearchesNewIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
@@ -151,7 +143,6 @@ export interface FileRoutesByTo {
   '/marketplace-searches/$searchId': typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   '/automation-tasks': typeof AuthenticatedAutomationTasksIndexRoute
   '/marketplace-searches': typeof AuthenticatedMarketplaceSearchesIndexRoute
-  '/marketplace-searches/new': typeof AuthenticatedMarketplaceSearchesNewIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -171,7 +162,6 @@ export interface FileRoutesById {
   '/_authenticated/marketplace-searches/$searchId': typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   '/_authenticated/automation-tasks/': typeof AuthenticatedAutomationTasksIndexRoute
   '/_authenticated/marketplace-searches/': typeof AuthenticatedMarketplaceSearchesIndexRoute
-  '/_authenticated/marketplace-searches/new/': typeof AuthenticatedMarketplaceSearchesNewIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,7 +181,6 @@ export interface FileRouteTypes {
     | '/marketplace-searches/$searchId'
     | '/automation-tasks/'
     | '/marketplace-searches/'
-    | '/marketplace-searches/new/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -209,7 +198,6 @@ export interface FileRouteTypes {
     | '/marketplace-searches/$searchId'
     | '/automation-tasks'
     | '/marketplace-searches'
-    | '/marketplace-searches/new'
   id:
     | '__root__'
     | '/_authenticated'
@@ -228,7 +216,6 @@ export interface FileRouteTypes {
     | '/_authenticated/marketplace-searches/$searchId'
     | '/_authenticated/automation-tasks/'
     | '/_authenticated/marketplace-searches/'
-    | '/_authenticated/marketplace-searches/new/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -359,13 +346,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAutomationTasksTaskIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/marketplace-searches/new/': {
-      id: '/_authenticated/marketplace-searches/new/'
-      path: '/marketplace-searches/new'
-      fullPath: '/marketplace-searches/new/'
-      preLoaderRoute: typeof AuthenticatedMarketplaceSearchesNewIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
@@ -375,7 +355,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMarketplaceSearchesSearchIdRoute: typeof AuthenticatedMarketplaceSearchesSearchIdRoute
   AuthenticatedAutomationTasksIndexRoute: typeof AuthenticatedAutomationTasksIndexRoute
   AuthenticatedMarketplaceSearchesIndexRoute: typeof AuthenticatedMarketplaceSearchesIndexRoute
-  AuthenticatedMarketplaceSearchesNewIndexRoute: typeof AuthenticatedMarketplaceSearchesNewIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -388,8 +367,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAutomationTasksIndexRoute,
   AuthenticatedMarketplaceSearchesIndexRoute:
     AuthenticatedMarketplaceSearchesIndexRoute,
-  AuthenticatedMarketplaceSearchesNewIndexRoute:
-    AuthenticatedMarketplaceSearchesNewIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

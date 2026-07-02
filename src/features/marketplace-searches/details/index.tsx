@@ -1,4 +1,5 @@
 import { isAxiosError } from 'axios'
+import { useState } from 'react'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -6,9 +7,9 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { AutomationConnectionStatus } from '@/features/automation-events/providers/automation-events-provider'
+import { MarketplaceSearchesCreateDrawer } from '../components/marketplace_searches_create_drawer'
 import { ProductsList } from './components/products-list'
 import { SearchCapturesList } from './components/search-captures-list'
-import { SearchDetailsDialogs } from './components/search-details-dialogs'
 import { SearchDetailsError } from './components/search-details-error'
 import { SearchDetailsNotFound } from './components/search-details-not-found'
 import { SearchDetailsPrimaryButtons } from './components/search-details-primary-buttons'
@@ -42,6 +43,10 @@ export function SearchDetails({
 }: SearchDetailsProps) {
   const { searchQuery, taskQuery, productsQuery, capturesQuery } =
     useSearchDetails(searchId, page, limit, capturePage, captureLimit)
+  const [
+    marketplaceSearchesCreateOpen,
+    setMarketplaceSearchesCreateOpen,
+  ] = useState(false)
   const isLoading =
     searchQuery.isPending || (searchQuery.isSuccess && taskQuery.isPending)
   const hasError = searchQuery.isError || taskQuery.isError
@@ -85,11 +90,21 @@ export function SearchDetails({
               Acompanhe a automação e os produtos descobertos.
             </p>
           </div>
-          <SearchDetailsPrimaryButtons />
+          <SearchDetailsPrimaryButtons
+            onCreateMarketplaceSearches={() =>
+              setMarketplaceSearchesCreateOpen(true)
+            }
+          />
         </div>
 
         {isLoading ? <SearchDetailsSkeleton /> : null}
-        {isNotFound ? <SearchDetailsNotFound /> : null}
+        {isNotFound ? (
+          <SearchDetailsNotFound
+            onCreateMarketplaceSearches={() =>
+              setMarketplaceSearchesCreateOpen(true)
+            }
+          />
+        ) : null}
         {hasError && !isNotFound ? (
           <SearchDetailsError onRetry={handleRetry} />
         ) : null}
@@ -131,7 +146,10 @@ export function SearchDetails({
         ) : null}
       </Main>
 
-      <SearchDetailsDialogs />
+      <MarketplaceSearchesCreateDrawer
+        open={marketplaceSearchesCreateOpen}
+        onOpenChange={setMarketplaceSearchesCreateOpen}
+      />
     </SearchDetailsProvider>
   )
 }

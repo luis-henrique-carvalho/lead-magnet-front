@@ -27,12 +27,14 @@ const formSchema = z.object({
     .max(100, 'Limite deve ser no máximo 100.'),
 })
 
-export type SearchFormValues = z.infer<typeof formSchema>
+export type MarketplaceSearchesFormValues = z.infer<typeof formSchema>
 
-interface SearchFormProps {
-  onSubmit: (data: SearchFormValues) => void
+interface MarketplaceSearchesFormProps {
+  onSubmit: (data: MarketplaceSearchesFormValues) => void
   isPending: boolean
   error?: string | null
+  formId?: string
+  showSubmitButton?: boolean
 }
 
 const marketplaces = [
@@ -41,8 +43,14 @@ const marketplaces = [
   { label: 'Shopee', value: 'shopee' },
 ]
 
-export function SearchForm({ onSubmit, isPending, error }: SearchFormProps) {
-  const form = useForm<SearchFormValues>({
+export function MarketplaceSearchesForm({
+  onSubmit,
+  isPending,
+  error,
+  formId,
+  showSubmitButton = true,
+}: MarketplaceSearchesFormProps) {
+  const form = useForm<MarketplaceSearchesFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       marketplace: undefined,
@@ -53,16 +61,20 @@ export function SearchForm({ onSubmit, isPending, error }: SearchFormProps) {
   })
 
   return (
-    <div className='w-full max-w-md space-y-4'>
-      {error && (
+    <div className='w-full space-y-4'>
+      {error ? (
         <Alert variant='destructive'>
           <AlertTitle>Erro</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-      )}
+      ) : null}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+        <form
+          id={formId}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='space-y-4'
+        >
           <FormField
             control={form.control}
             name='marketplace'
@@ -138,15 +150,17 @@ export function SearchForm({ onSubmit, isPending, error }: SearchFormProps) {
             )}
           />
 
-          <Button type='submit' className='w-full' disabled={isPending}>
-            {isPending ? (
-              <>Iniciando...</>
-            ) : (
-              <>
-                Iniciar Busca <Search className='ms-2 h-4 w-4' />
-              </>
-            )}
-          </Button>
+          {showSubmitButton ? (
+            <Button type='submit' className='w-full' disabled={isPending}>
+              {isPending ? (
+                <>Iniciando...</>
+              ) : (
+                <>
+                  Iniciar Busca <Search className='ms-2 h-4 w-4' />
+                </>
+              )}
+            </Button>
+          ) : null}
         </form>
       </Form>
     </div>

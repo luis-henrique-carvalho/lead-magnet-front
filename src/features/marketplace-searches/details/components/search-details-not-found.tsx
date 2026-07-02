@@ -1,7 +1,13 @@
 import { SearchX } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { MarketplaceSearchesCreatePrimaryButton } from '../../components/marketplace_searches_create_primary_button'
 
-export function SearchDetailsNotFound() {
+type SearchDetailsNotFoundProps = {
+  onCreateMarketplaceSearches: () => void
+}
+
+export function SearchDetailsNotFound({
+  onCreateMarketplaceSearches,
+}: SearchDetailsNotFoundProps) {
   return (
     <div className='flex min-h-[50vh] flex-col items-center justify-center gap-3 text-center'>
       <SearchX className='size-12 text-muted-foreground' aria-hidden='true' />
@@ -10,9 +16,11 @@ export function SearchDetailsNotFound() {
       <p className='max-w-md text-muted-foreground'>
         Esta busca não existe ou foi removida. Verifique o endereço informado.
       </p>
-      <Button asChild variant='outline'>
-        <a href='/marketplace-searches/new'>Criar nova busca</a>
-      </Button>
+      <MarketplaceSearchesCreatePrimaryButton
+        label='Criar nova busca'
+        variant='outline'
+        onCreateMarketplaceSearches={onCreateMarketplaceSearches}
+      />
     </div>
   )
 }

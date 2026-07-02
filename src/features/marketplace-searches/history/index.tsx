@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router'
-import { Info, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { Info } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,8 +16,10 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { HistoryPrimaryButtons } from './components/history-primary-buttons'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
+import { MarketplaceSearchesCreateDrawer } from '../components/marketplace_searches_create_drawer'
+import { MarketplaceSearchesCreatePrimaryButton } from '../components/marketplace_searches_create_primary_button'
+import { HistoryPrimaryButtons } from './components/history-primary-buttons'
 import { HistoryTable } from './components/history-table'
 import { useSearchHistory } from './hooks/use-search-history'
 
@@ -38,6 +40,10 @@ export function HistoryScreen({
   status,
   navigate,
 }: HistoryScreenProps) {
+  const [
+    marketplaceSearchesCreateOpen,
+    setMarketplaceSearchesCreateOpen,
+  ] = useState(false)
   const { data, isLoading, isError, error, refetch } = useSearchHistory({
     page,
     limit,
@@ -68,7 +74,11 @@ export function HistoryScreen({
               plataforma.
             </p>
           </div>
-          <HistoryPrimaryButtons />
+          <HistoryPrimaryButtons
+            onCreateMarketplaceSearches={() =>
+              setMarketplaceSearchesCreateOpen(true)
+            }
+          />
         </div>
 
         {isLoading && (
@@ -117,12 +127,12 @@ export function HistoryScreen({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className='flex justify-center'>
-                  <Button asChild>
-                    <Link to='/marketplace-searches/new'>
-                      <Plus className='me-2 h-4 w-4' />
-                      Iniciar Nova Busca
-                    </Link>
-                  </Button>
+                  <MarketplaceSearchesCreatePrimaryButton
+                    label='Iniciar Nova Busca'
+                    onCreateMarketplaceSearches={() =>
+                      setMarketplaceSearchesCreateOpen(true)
+                    }
+                  />
                 </CardContent>
               </Card>
             ) : (
@@ -140,6 +150,10 @@ export function HistoryScreen({
           </>
         )}
       </Main>
+      <MarketplaceSearchesCreateDrawer
+        open={marketplaceSearchesCreateOpen}
+        onOpenChange={setMarketplaceSearchesCreateOpen}
+      />
     </>
   )
 }

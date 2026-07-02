@@ -1,13 +1,16 @@
-import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { MarketplaceSearchesCreatePrimaryButton } from '../../components/marketplace_searches_create_primary_button'
 
-export function SearchDetailsPrimaryButtons() {
+type SearchDetailsPrimaryButtonsProps = {
+  onCreateMarketplaceSearches: () => void
+}
+
+export function SearchDetailsPrimaryButtons({
+  onCreateMarketplaceSearches,
+}: SearchDetailsPrimaryButtonsProps) {
   return (
-    <Button asChild>
-      <a href='/marketplace-searches/new'>
-        <Plus data-icon='inline-start' />
-        Nova busca
-      </a>
-    </Button>
+    <MarketplaceSearchesCreatePrimaryButton
+      label='Nova busca'
+      onCreateMarketplaceSearches={onCreateMarketplaceSearches}
+    />
   )
 }

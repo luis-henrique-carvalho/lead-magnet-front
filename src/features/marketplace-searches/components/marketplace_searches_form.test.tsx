@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { userEvent } from 'vitest/browser'
-import { SearchForm } from './search-form'
+import { MarketplaceSearchesForm } from './marketplace_searches_form'
 
-describe('SearchForm', () => {
+describe('MarketplaceSearchesForm', () => {
   it('renders all form fields with correct default values', async () => {
     const { getByRole, getByLabelText } = await render(
-      <SearchForm onSubmit={vi.fn()} isPending={false} />
+      <MarketplaceSearchesForm onSubmit={vi.fn()} isPending={false} />
     )
 
     const marketplaceSelect = getByRole('combobox', { name: /Marketplace/i })
@@ -21,14 +21,13 @@ describe('SearchForm', () => {
     await expect.element(limitInput).toBeInTheDocument()
     await expect.element(submitButton).toBeInTheDocument()
 
-    // Default values
     await expect.element(limitInput).toHaveValue(100)
   })
 
   it('shows validation errors for invalid data', async () => {
     const onSubmit = vi.fn()
     const { getByRole, getByText, getByLabelText } = await render(
-      <SearchForm onSubmit={onSubmit} isPending={false} />
+      <MarketplaceSearchesForm onSubmit={onSubmit} isPending={false} />
     )
 
     const submitButton = getByRole('button', { name: /Iniciar Busca/i })
@@ -49,7 +48,7 @@ describe('SearchForm', () => {
   it('submits form with valid data', async () => {
     const onSubmit = vi.fn()
     const { getByRole, getByLabelText } = await render(
-      <SearchForm onSubmit={onSubmit} isPending={false} />
+      <MarketplaceSearchesForm onSubmit={onSubmit} isPending={false} />
     )
 
     const marketplaceSelect = getByRole('combobox', { name: /Marketplace/i })
@@ -79,7 +78,7 @@ describe('SearchForm', () => {
 
   it('disables inputs and button when pending', async () => {
     const { getByRole, getByLabelText } = await render(
-      <SearchForm onSubmit={vi.fn()} isPending={true} />
+      <MarketplaceSearchesForm onSubmit={vi.fn()} isPending={true} />
     )
 
     const marketplaceSelect = getByRole('combobox', { name: /Marketplace/i })
@@ -97,7 +96,7 @@ describe('SearchForm', () => {
 
   it('displays API error message', async () => {
     const { getByText } = await render(
-      <SearchForm
+      <MarketplaceSearchesForm
         onSubmit={vi.fn()}
         isPending={false}
         error='Falha na conexão'

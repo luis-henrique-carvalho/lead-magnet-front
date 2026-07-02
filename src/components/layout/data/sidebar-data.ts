@@ -1,5 +1,4 @@
 import {
-  Search,
   History,
   Terminal,
   Command,
@@ -36,11 +35,6 @@ export const sidebarData: SidebarData = {
       title: 'Lead Magnet',
       items: [
         {
-          title: 'Nova Busca',
-          url: '/marketplace-searches/new',
-          icon: Search,
-        },
-        {
           title: 'Histórico de Buscas',
           url: '/marketplace-searches',
           icon: History,
@@ -59,4 +53,3 @@ export const sidebarData: SidebarData = {
     },
   ],
 }
-

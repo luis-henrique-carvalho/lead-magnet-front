@@ -172,6 +172,31 @@ describe('SearchDetails', () => {
       .toHaveAttribute('href', '/automation-tasks/task-id')
   })
 
+  it('abre a sheet para iniciar uma nova busca', async () => {
+    vi.spyOn(api, 'get').mockImplementation(async (url) => {
+      if (url === '/marketplace-searches/search-id') {
+        return { data: search }
+      }
+
+      if (url === '/automation-tasks/task-id') {
+        return { data: { id: 'task-id', status: 'completed' } }
+      }
+
+      return { data: { items: [], page: 1, limit: 20, total: 0 } }
+    })
+
+    const screen = await renderScreen()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Nova busca' }))
+
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Nova Busca' }))
+      .toBeInTheDocument()
+    await expect
+      .element(screen.getByLabelText('Palavra-chave'))
+      .toBeInTheDocument()
+  })
+
   it('permite tentar novamente após uma falha temporária', async () => {
     let detailAttempts = 0
     vi.spyOn(api, 'get').mockImplementation(async (url) => {

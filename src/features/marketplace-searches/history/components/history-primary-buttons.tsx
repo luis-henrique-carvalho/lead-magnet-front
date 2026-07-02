@@ -1,14 +1,16 @@
-import { Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { MarketplaceSearchesCreatePrimaryButton } from '../../components/marketplace_searches_create_primary_button'
 
-export function HistoryPrimaryButtons() {
+type HistoryPrimaryButtonsProps = {
+  onCreateMarketplaceSearches: () => void
+}
+
+export function HistoryPrimaryButtons({
+  onCreateMarketplaceSearches,
+}: HistoryPrimaryButtonsProps) {
   return (
-    <Button asChild size='sm'>
-      <Link to='/marketplace-searches/new'>
-        <Plus className='me-2 h-4 w-4' />
-        Nova Busca
-      </Link>
-    </Button>
+    <MarketplaceSearchesCreatePrimaryButton
+      size='sm'
+      onCreateMarketplaceSearches={onCreateMarketplaceSearches}
+    />
   )
 }
