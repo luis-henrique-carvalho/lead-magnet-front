@@ -28,14 +28,16 @@ type DataTableFacetedFilterProps<TData, TValue> = {
     value: string
     icon?: React.ComponentType<{ className?: string }>
   }[]
+  showCounts?: boolean
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  showCounts = true,
 }: DataTableFacetedFilterProps<TData, TValue>) {
-  const facets = column?.getFacetedUniqueValues()
+  const facets = showCounts ? column?.getFacetedUniqueValues() : undefined
   const selectedValues = new Set(column?.getFilterValue() as string[])
 
   return (

@@ -49,9 +49,14 @@ export function useAutomationEventStream() {
   const terminalTaskIds = useRef(new Set<string>())
 
   const reconcile = useCallback(async () => {
-    await queryClient.invalidateQueries({
-      queryKey: ['marketplace-searches'],
-    })
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ['marketplace-searches'],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['automation-tasks'],
+      }),
+    ])
   }, [queryClient])
 
   const processEvent = useCallback(

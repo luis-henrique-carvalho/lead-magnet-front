@@ -127,7 +127,7 @@ describe('AutomationEventsProvider', () => {
     FakeEventSource.instances[0]?.emit('task.updated', event)
 
     await vi.waitFor(() => {
-      expect(invalidateQueries).toHaveBeenCalledTimes(3)
+      expect(invalidateQueries).toHaveBeenCalledTimes(4)
     })
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ['marketplace-searches', 'task', 'task-id'],
@@ -137,6 +137,9 @@ describe('AutomationEventsProvider', () => {
     })
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ['marketplace-searches', 'products', 'search-id'],
+    })
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['automation-tasks'],
     })
   })
 
@@ -186,7 +189,7 @@ describe('AutomationEventsProvider', () => {
     })
 
     await vi.waitFor(() => {
-      expect(invalidateQueries).toHaveBeenCalledTimes(3)
+      expect(invalidateQueries).toHaveBeenCalledTimes(4)
     })
   })
 
@@ -209,13 +212,16 @@ describe('AutomationEventsProvider', () => {
     })
 
     await vi.waitFor(() => {
-      expect(invalidateQueries).toHaveBeenCalledTimes(2)
+      expect(invalidateQueries).toHaveBeenCalledTimes(3)
     })
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ['marketplace-searches', 'task', 'capture-task-id'],
     })
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ['marketplace-searches', 'captures', 'search-id'],
+    })
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['automation-tasks'],
     })
   })
 
@@ -250,12 +256,12 @@ describe('AutomationEventsProvider', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Atualizar dados' })
     )
-    expect(invalidateQueries).toHaveBeenCalledTimes(1)
+    expect(invalidateQueries).toHaveBeenCalledTimes(2)
 
     eventSource?.open()
 
     await vi.waitFor(() => {
-      expect(invalidateQueries).toHaveBeenCalledTimes(2)
+      expect(invalidateQueries).toHaveBeenCalledTimes(4)
     })
     await expect
       .element(

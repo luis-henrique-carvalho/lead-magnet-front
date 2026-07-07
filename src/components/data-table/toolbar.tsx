@@ -12,6 +12,7 @@ type DataTableToolbarProps<TData> = {
   filters?: {
     columnId: string
     title: string
+    showCounts?: boolean
     options: {
       label: string
       value: string
@@ -61,6 +62,7 @@ export function DataTableToolbar<TData>({
                 column={column}
                 title={filter.title}
                 options={filter.options}
+                showCounts={filter.showCounts}
               />
             )
           })}

@@ -10,6 +10,9 @@ export async function invalidateAutomationEventQueries(
     queryClient.invalidateQueries({
       queryKey: marketplaceSearchKeys.task(event.taskId),
     }),
+    queryClient.invalidateQueries({
+      queryKey: ['automation-tasks'],
+    }),
   ]
 
   if (event.searchId && event.type === 'marketplace_product_search') {
